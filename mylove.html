@@ -19,8 +19,25 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden;
         }
 
+        .page {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .page.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* PAGE 1: Question */
         .question-container {
             background: #fff5f5;
             border-radius: 30px;
@@ -32,10 +49,16 @@
             position: relative;
         }
 
-        .emoji-container {
-            font-size: 120px;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
+        .couple-image {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 20px;
+            perspective: 1000px;
+        }
+
+        .couple-image canvas {
+            width: 100%;
+            height: 100%;
         }
 
         @keyframes float {
@@ -92,9 +115,85 @@
             background: #cbd5e0;
         }
 
-        .result-container {
-            display: none;
-            animation: fadeIn 0.5s ease;
+        /* PAGE 2: Chase Animation */
+        .chase-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 100%);
+            overflow: hidden;
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, #90EE90, #228B22);
+            border-top: 5px solid #006400;
+        }
+
+        .grass {
+            position: absolute;
+            bottom: 100px;
+            font-size: 30px;
+            opacity: 0.7;
+        }
+
+        .running-character {
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            bottom: 100px;
+            transition: none;
+        }
+
+        .running-character svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .char-girl {
+            left: 100px;
+            animation: runGirl 10s linear forwards;
+        }
+
+        .char-boy {
+            left: -150px;
+            animation: runBoy 10s linear forwards;
+        }
+
+        @keyframes runGirl {
+            0% { left: 100px; }
+            100% { left: calc(100% + 100px); }
+        }
+
+        @keyframes runBoy {
+            0% { left: -100px; }
+            100% { left: calc(100% + 100px); }
+        }
+
+        .hearts-trail {
+            position: absolute;
+            font-size: 30px;
+            animation: fadeOut 2s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+
+        /* PAGE 3: Happy Ending */
+        .ending-container {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease;
         }
 
         @keyframes fadeIn {
@@ -102,19 +201,33 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        .result-container.active {
-            display: block;
+        .hug-image {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 30px;
+            animation: hugAnimation 2s ease-in-out infinite;
         }
 
-        .result {
-            font-size: 28px;
-            color: #e53e3e;
-            margin-top: 20px;
+        .hug-image svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes hugAnimation {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .love-message {
+            font-size: 36px;
             font-weight: bold;
+            color: #e53e3e;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .hearts {
-            font-size: 50px;
+        .hearts-rain {
+            font-size: 40px;
             margin-top: 20px;
             animation: heartbeat 1.5s ease infinite;
         }
@@ -125,55 +238,238 @@
             50% { transform: scale(1); }
         }
 
-        .sad-message {
-            font-size: 18px;
-            color: #718096;
-            margin-top: 20px;
-            font-style: italic;
+        .floating-hearts {
+            position: absolute;
+            font-size: 30px;
+            animation: floatUp 3s ease-in infinite;
+        }
+
+        @keyframes floatUp {
+            0% { 
+                bottom: -50px; 
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% { 
+                bottom: 100vh; 
+                opacity: 0;
+                transform: translateX(50px);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="question-container">
-        <div class="emoji-container">
-            🐻❤️🐶
-        </div>
-        
-        <div class="question">
-            Do you <span class="love">love</span> me?
-        </div>
-        
-        <div class="button-container">
-            <button class="yes-btn" onclick="handleYes()">
-                Yes 💖
-            </button>
-            <button class="no-btn" id="noBtn" onmouseover="moveButton()" onclick="handleNo()">
-                No 😢
-            </button>
-        </div>
-
-        <div class="result-container" id="result">
-            <div class="result">
-                Love you too! 💞
+    <!-- PAGE 1: Question -->
+    <div class="page active" id="page1">
+        <div class="question-container">
+            <div class="couple-image">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Girl (left) -->
+                    <!-- Hair -->
+                    <ellipse cx="60" cy="60" rx="25" ry="30" fill="#8B4513"/>
+                    <!-- Head -->
+                    <circle cx="60" cy="70" r="20" fill="#FFD5BA"/>
+                    <!-- Eyes -->
+                    <circle cx="55" cy="68" r="2" fill="#000"/>
+                    <circle cx="65" cy="68" r="2" fill="#000"/>
+                    <!-- Smile -->
+                    <path d="M 55 75 Q 60 78 65 75" stroke="#FF69B4" fill="none" stroke-width="2"/>
+                    <!-- Body (dress) -->
+                    <path d="M 60 90 L 45 140 L 75 140 Z" fill="#FF69B4"/>
+                    <!-- Arms -->
+                    <line x1="60" y1="95" x2="75" y2="105" stroke="#FFD5BA" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="60" y1="95" x2="45" y2="105" stroke="#FFD5BA" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Legs -->
+                    <line x1="53" y1="140" x2="53" y2="170" stroke="#FFD5BA" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="67" y1="140" x2="67" y2="170" stroke="#FFD5BA" stroke-width="6" stroke-linecap="round"/>
+                    
+                    <!-- Boy (right) -->
+                    <!-- Hair -->
+                    <ellipse cx="140" cy="55" rx="23" ry="25" fill="#4A3728"/>
+                    <!-- Head -->
+                    <circle cx="140" cy="70" r="20" fill="#FFD5BA"/>
+                    <!-- Eyes -->
+                    <circle cx="135" cy="68" r="2" fill="#000"/>
+                    <circle cx="145" cy="68" r="2" fill="#000"/>
+                    <!-- Smile -->
+                    <path d="M 135 75 Q 140 78 145 75" stroke="#4169E1" fill="none" stroke-width="2"/>
+                    <!-- Body (shirt) -->
+                    <rect x="125" y="90" width="30" height="45" rx="5" fill="#4169E1"/>
+                    <!-- Arms -->
+                    <line x1="125" y1="95" x2="110" y2="105" stroke="#FFD5BA" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="155" y1="95" x2="170" y2="105" stroke="#FFD5BA" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Pants -->
+                    <rect x="125" y="135" width="13" height="35" fill="#2C3E50"/>
+                    <rect x="142" y="135" width="13" height="35" fill="#2C3E50"/>
+                    
+                    <!-- Heart between them -->
+                    <path d="M 100 100 L 105 95 Q 110 90 115 95 Q 120 90 125 95 L 115 105 Z" fill="#FF1744" opacity="0.8"/>
+                </svg>
             </div>
-            <div class="hearts">
-                ❤️ 💕 💖 💗 💓
+            
+            <div class="question">
+                Do you <span class="love">love</span> me?
+            </div>
+            
+            <div class="button-container">
+                <button class="yes-btn" onclick="handleYes()">
+                    Yes 💖
+                </button>
+                <button class="no-btn" id="noBtn" onmouseover="moveButton()" onclick="handleNo()">
+                    No 😢
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: Chase Animation -->
+    <div class="page" id="page2">
+        <div class="chase-container">
+            <div class="grass" style="left: 10%;">🌿</div>
+            <div class="grass" style="left: 30%;">🌿</div>
+            <div class="grass" style="left: 50%;">🌿</div>
+            <div class="grass" style="left: 70%;">🌿</div>
+            <div class="grass" style="left: 90%;">🌿</div>
+            
+            <div class="running-character char-girl" id="charGirl">
+                <svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Hair -->
+                    <ellipse cx="50" cy="30" rx="25" ry="30" fill="#8B4513"/>
+                    <!-- Head -->
+                    <circle cx="50" cy="40" r="20" fill="#FFD5BA"/>
+                    <!-- Eyes -->
+                    <circle cx="45" cy="38" r="2" fill="#000"/>
+                    <circle cx="55" cy="38" r="2" fill="#000"/>
+                    <!-- Smile -->
+                    <path d="M 45 45 Q 50 48 55 45" stroke="#FF69B4" fill="none" stroke-width="2"/>
+                    <!-- Body (dress) -->
+                    <path d="M 50 60 L 30 110 L 70 110 Z" fill="#FF69B4"/>
+                    <!-- Running arm front -->
+                    <line x1="50" y1="65" x2="70" y2="80" stroke="#FFD5BA" stroke-width="5" stroke-linecap="round"/>
+                    <!-- Running arm back -->
+                    <line x1="50" y1="65" x2="30" y2="75" stroke="#FFD5BA" stroke-width="5" stroke-linecap="round"/>
+                    <!-- Running legs -->
+                    <line x1="40" y1="110" x2="35" y2="145" stroke="#FFD5BA" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="60" y1="110" x2="70" y2="130" stroke="#FFD5BA" stroke-width="7" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="running-character char-boy" id="charBoy">
+                <svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Hair -->
+                    <ellipse cx="50" cy="25" rx="23" ry="25" fill="#4A3728"/>
+                    <!-- Head -->
+                    <circle cx="50" cy="40" r="20" fill="#FFD5BA"/>
+                    <!-- Eyes -->
+                    <circle cx="45" cy="38" r="2" fill="#000"/>
+                    <circle cx="55" cy="38" r="2" fill="#000"/>
+                    <!-- Smile -->
+                    <path d="M 45 45 Q 50 48 55 45" stroke="#4169E1" fill="none" stroke-width="2"/>
+                    <!-- Body (shirt) -->
+                    <rect x="35" y="60" width="30" height="45" rx="5" fill="#4169E1"/>
+                    <!-- Running arm front -->
+                    <line x1="35" y1="65" x2="15" y2="80" stroke="#FFD5BA" stroke-width="5" stroke-linecap="round"/>
+                    <!-- Running arm back -->
+                    <line x1="65" y1="65" x2="85" y2="75" stroke="#FFD5BA" stroke-width="5" stroke-linecap="round"/>
+                    <!-- Pants -->
+                    <rect x="35" y="105" width="13" height="40" fill="#2C3E50"/>
+                    <rect x="52" y="105" width="13" height="40" fill="#2C3E50"/>
+                    <!-- Running legs position -->
+                    <line x1="41" y1="145" x2="35" y2="145" stroke="#2C3E50" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="58" y1="145" x2="70" y2="130" stroke="#2C3E50" stroke-width="8" stroke-linecap="round"/>
+                </svg>
+            </div>
+            
+            <div class="ground"></div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: Happy Ending -->
+    <div class="page" id="page3">
+        <div class="ending-container">
+            <div class="hug-image">
+                <svg viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Girl (left) -->
+                    <!-- Hair -->
+                    <ellipse cx="80" cy="60" rx="28" ry="35" fill="#8B4513"/>
+                    <!-- Head -->
+                    <circle cx="80" cy="75" r="25" fill="#FFD5BA"/>
+                    <!-- Eyes (happy) -->
+                    <path d="M 73 73 Q 75 70 77 73" stroke="#000" fill="none" stroke-width="2"/>
+                    <path d="M 83 73 Q 85 70 87 73" stroke="#000" fill="none" stroke-width="2"/>
+                    <!-- Smile -->
+                    <path d="M 73 82 Q 80 87 87 82" stroke="#FF69B4" fill="none" stroke-width="2.5"/>
+                    <!-- Body (dress) -->
+                    <path d="M 80 100 L 55 160 L 105 160 Z" fill="#FF69B4"/>
+                    <!-- Left arm hugging -->
+                    <path d="M 80 105 Q 90 110 110 115" stroke="#FFD5BA" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <!-- Legs -->
+                    <line x1="70" y1="160" x2="70" y2="200" stroke="#FFD5BA" stroke-width="10" stroke-linecap="round"/>
+                    <line x1="90" y1="160" x2="90" y2="200" stroke="#FFD5BA" stroke-width="10" stroke-linecap="round"/>
+                    
+                    <!-- Boy (right) -->
+                    <!-- Hair -->
+                    <ellipse cx="170" cy="55" rx="26" ry="30" fill="#4A3728"/>
+                    <!-- Head -->
+                    <circle cx="170" cy="75" r="25" fill="#FFD5BA"/>
+                    <!-- Eyes (happy) -->
+                    <path d="M 163 73 Q 165 70 167 73" stroke="#000" fill="none" stroke-width="2"/>
+                    <path d="M 173 73 Q 175 70 177 73" stroke="#000" fill="none" stroke-width="2"/>
+                    <!-- Smile -->
+                    <path d="M 163 82 Q 170 87 177 82" stroke="#4169E1" fill="none" stroke-width="2.5"/>
+                    <!-- Body (shirt) -->
+                    <rect x="145" y="100" width="50" height="60" rx="8" fill="#4169E1"/>
+                    <!-- Right arm hugging -->
+                    <path d="M 170 105 Q 160 110 140 115" stroke="#FFD5BA" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <!-- Pants -->
+                    <rect x="145" y="160" width="20" height="40" fill="#2C3E50"/>
+                    <rect x="175" y="160" width="20" height="40" fill="#2C3E50"/>
+                    
+                    <!-- Big heart in the middle -->
+                    <path d="M 125 130 L 135 118 Q 145 108 155 118 Q 165 108 175 118 L 155 145 Z" fill="#FF1744" opacity="0.9"/>
+                    
+                    <!-- Small hearts floating -->
+                    <circle cx="60" cy="50" r="5" fill="#FF1744" opacity="0.7"/>
+                    <circle cx="190" cy="50" r="5" fill="#FF1744" opacity="0.7"/>
+                    <circle cx="125" cy="30" r="4" fill="#FF69B4" opacity="0.7"/>
+                </svg>
+            </div>
+            
+            <div class="love-message">
+                Forever Together! 💕
+            </div>
+            
+            <div style="font-size: 24px; color: #4a5568; margin: 20px 0;">
+                ขอบคุณที่รักกัน 🥰
+            </div>
+            
+            <div class="hearts-rain">
+                💖 💕 💗 💓 💞 💝
             </div>
         </div>
     </div>
 
     <script>
+        let heartsInterval;
+
         function handleYes() {
-            document.querySelector('.question').style.display = 'none';
-            document.querySelector('.button-container').style.display = 'none';
-            document.getElementById('result').classList.add('active');
+            // Go to page 2
+            document.getElementById('page1').classList.remove('active');
+            document.getElementById('page2').classList.add('active');
             
-            // Confetti effect
-            createConfetti();
+            // Start hearts trail
+            heartsInterval = setInterval(createHeartsTrail, 200);
+            
+            // After 10 seconds, go to page 3
+            setTimeout(() => {
+                clearInterval(heartsInterval);
+                document.getElementById('page2').classList.remove('active');
+                document.getElementById('page3').classList.add('active');
+                createFloatingHearts();
+                createConfetti();
+            }, 10000);
         }
 
         function handleNo() {
-            // This won't be easy to click!
             moveButton();
         }
 
@@ -191,6 +487,36 @@
             btn.style.left = randomX + 'px';
             btn.style.top = randomY + 'px';
             btn.style.transition = 'all 0.3s ease';
+        }
+
+        function createHeartsTrail() {
+            const heart = document.createElement('div');
+            heart.className = 'hearts-trail';
+            heart.textContent = '💕';
+            heart.style.left = (Math.random() * window.innerWidth) + 'px';
+            heart.style.bottom = Math.random() * 200 + 100 + 'px';
+            
+            document.querySelector('.chase-container').appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 2000);
+        }
+
+        function createFloatingHearts() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-hearts';
+                    const hearts = ['💖', '💕', '💗', '💓', '💞', '💝'];
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    
+                    document.querySelector('.ending-container').parentElement.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 6000);
+                }, i * 300);
+            }
         }
 
         function createConfetti() {
