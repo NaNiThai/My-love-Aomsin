@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do you love me?</title>
+
+    <style>
+        * {
+            margin: 0; padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        .page.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* PAGE 1 */
+        .question-container {
+            background: #fff5f5;
+            padding: 50px 30px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        .couple-image {
+            width: 260px;
+            height: 260px;
+            margin: 0 auto 20px;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .couple-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .question {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            color: #2d3748;
+        }
+
+        .love { color: #e53e3e; }
+
+        .button-container {
+            display: flex; gap: 20px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+            color: white;
+        }
+
+        .no-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+            position: relative;
+        }
+
+        /* PAGE 2 */
+        .chase-container {
+            width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #87CEEB, #98D8C8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .running-character {
+            position: absolute;
+            width: 150px; height: 150px;
+            bottom: 80px;
+        }
+
+        .running-character img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+        }
+
+        .char-girl {
+            left: 100px;
+            animation: runGirl 10s linear forwards;
+        }
+        .char-boy {
+            left: -150px;
+            animation: runBoy 10s linear forwards;
+        }
+
+        @keyframes runGirl {
+            0% { left: 100px; }
+            100% { left: calc(100% + 200px); }
+        }
+        @keyframes runBoy {
+            0% { left: -150px; }
+            100% { left: calc(100% + 200px); }
+        }
+
+        .hearts-trail {
+            position: absolute;
+            font-size: 28px;
+            animation: fadeOut 2s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-40px); }
+        }
+
+        /* PAGE 3 */
+        .ending-container {
+            background: #ffe2d6;
+            padding: 50px 30px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hug-image {
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 20px;
+            animation: hugAnim 3s infinite ease-in-out;
+        }
+
+        @keyframes hugAnim {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .hug-image img {
+            width: 100%; height: 100%;
+        }
+
+        .love-message {
+            font-size: 34px;
+            color: #e53e3e;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .hearts-rain {
+            font-size: 40px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%,100% { transform: scale(1); }
+            30% { transform: scale(1.3); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE 1 -->
+    <div class="page active" id="page1">
+        <div class="question-container">
+            <div class="couple-image">
+                <img src="stitch_stand.png">
+            </div>
+
+            <div class="question">
+                Do you <span class="love">love</span> me?
+            </div>
+
+            <div class="button-container">
+                <button class="yes-btn" onclick="goYes()">Yes 💖</button>
+                <button class="no-btn" id="noBtn" onmouseover="moveNo()">No 😢</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page" id="page2">
+        <div class="chase-container">
+
+            <div class="running-character char-girl">
+                <img src="stitch_girl_run.png">
+            </div>
+
+            <div class="running-character char-boy">
+                <img src="stitch_boy_run.png">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="page" id="page3">
+        <div class="ending-container">
+
+            <div class="hug-image">
+                <img src="stitch_hug.png">
+            </div>
+
+            <div class="love-message">Forever Together 💕</div>
+            <div style="font-size: 20px; color:#555;">ขอบคุณที่รักกัน 🥰</div>
+
+            <div class="hearts-rain">💗 💖 💕 💞 💓</div>
+
+        </div>
+    </div>
+
+<script>
+    function goYes() {
+        document.getElementById('page1').classList.remove('active');
+        document.getElementById('page2').classList.add('active');
+
+        setTimeout(() => {
+            document.getElementById('page2').classList.remove('active');
+            document.getElementById('page3').classList.add('active');
+        }, 10000);
+    }
+
+    function moveNo() {
+        const btn = document.getElementById('noBtn');
+        const box = document.querySelector('.question-container');
+
+        const maxX = box.offsetWidth - btn.offsetWidth - 40;
+        const maxY = box.offsetHeight - btn.offsetHeight - 40;
+
+        btn.style.position = "absolute";
+        btn.style.left = Math.random() * maxX + "px";
+        btn.style.top = Math.random() * maxY + "px";
+    }
+</script>
+
+</body>
+</html>
